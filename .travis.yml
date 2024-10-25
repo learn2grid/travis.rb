@@ -1,29 +1,20 @@
 language: ruby
-cache: bundler
-
-os:
-  - linux
-
-rvm:
-  - jruby
-  - "2.4"
-  - "2.5"
-  - "2.6"
-  - "2.7"
-
 jobs:
   include:
-    - rvm: "2.3"
+    - rvm: "3.2"
+      cache: bundler
+      dist: bionic
       before_script:
         - gem install faraday -v 1.0.1
     - os: osx
-      rvm: "2.5"
-    - os: osx
-      rvm: "2.6"
+      # Broken ruby 3.2 workaround
+      osx_image: xcode11.4.1
+      before_install:
+        - rvm get stable && rvm reload && rvm install 3.2.5 --verify-downloads 1 --disable-install-doc -C --without-tcl,--without-tk,--without-gmp && rvm use 3.2.5 --default
     - stage: deploy
       if: repo = travis-ci/travis.rb and branch = master and type = push
-      os: linux
-      rvm: "2.6"
+      dist: bionic
+      rvm: "3.2"
       deploy:
         provider: rubygems
         api_key:

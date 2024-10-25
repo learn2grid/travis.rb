@@ -1,8 +1,8 @@
-# The Travis Client [![Build Status](https://travis-ci.com/travis-ci/travis.rb.svg?branch=master)](https://travis-ci.com/travis-ci/travis.rb)
+# The Travis Client [![Build Status](https://app.travis-ci.com/travis-ci/travis.rb.svg?branch=master)](https://app.travis-ci.com/github/travis-ci/travis.rb)
 
 ![The Travis Mascot](https://about.travis-ci.org/images/travis-mascot-200px.png)
 
-The [travis gem](https://rubygems.org/gems/travis) includes both a [command line client](#command-line-client) and a [Ruby library](#ruby-library) to interface with a Travis CI service. Both work with [travis-ci.org](https://travis-ci.org), [travis-ci.com](https://travis-ci.com) or any custom Travis CI setup you might have. Check out the [installation instructions](#installation) to get it running in no time.
+The [travis gem](https://rubygems.org/gems/travis) includes both a [command line client](#command-line-client) and a [Ruby library](#ruby-library) to interface with a Travis CI service using GitHub account. Both work with [travis-ci.com](https://travis-ci.com) or any custom Travis CI setup you might have. Check out the [installation instructions](#installation) to get it running in no time.
 
 ## Table of Contents
 
@@ -17,6 +17,8 @@ The [travis gem](https://rubygems.org/gems/travis) includes both a [command line
         * [`login`](#login) - authenticates against the API and stores the token
         * [`monitor`](#monitor) - live monitor for what's going on
         * [`raw`](#raw) - makes an (authenticated) API call and prints out the result
+        * [`regenerate-token`](#regenerate-token) - regenerates the stored API token
+        * [`remove-token`](#remove-token) - deletes the stored API token
         * [`report`](#report) - generates a report useful for filing issues
         * [`repos`](#repos) - lists repositories the user has certain permissions on
         * [`sync`](#sync) - triggers a new sync with GitHub
@@ -81,7 +83,7 @@ The [travis gem](https://rubygems.org/gems/travis) includes both a [command line
 
 ## Command Line Client
 
-![](http://about.travis-ci.org/images/new-tricks.png)
+![](https://docs.travis-ci.com/images/new-tricks.png)
 
 There are three types of commands: [Non-API Commands](#non-api-commands), [General API Commands](#general-api-commands) and [Repository Commands](#repository-commands). All commands take the form of `travis COMMAND [ARGUMENTS] [OPTIONS]`. You can get a list of commands by running [`help`](#help).
 
@@ -328,6 +330,24 @@ $ travis raw /repos/travis-ci/travis.rb
 ```
 
 Use `--json` if you'd rather prefer the output to be JSON.
+
+#### `regenerate-token`
+
+This command is used to regenerate the stored API token. New token will be stored in the config.
+
+``` console
+$ travis regenerate-token
+Successfully regenerated the token!
+```
+
+#### `remove-token`
+
+This command is used to remove the access token from the config, log out the user and disable the token.
+
+``` console
+$ travis remove-token
+Successfully removed the access token!
+```
 
 #### `report`
 
@@ -1987,7 +2007,7 @@ If you do not have write access to the system gem directory, you'll need to perf
 Now make sure everything is working:
 
     $ travis version
-    1.10.0
+    1.14.0
 
 See also [Note on Ubuntu](#ubuntu) below.
 
@@ -2065,6 +2085,20 @@ You can eradicate this problem by either:
 See https://github.com/travis-ci/travis.rb/issues/768#issuecomment-700220351 for more details.
 
 ## Version History
+### 1.14.0
+
+* Remove org references https://github.com/travis-ci/travis.rb/pull/861
+
+### 1.13.0
+
+* Default API endpoint switched https://github.com/travis-ci/travis.rb/pull/840
+* Api key regenerate https://github.com/travis-ci/travis.rb/pull/842
+
+### 1.12.0
+
+* Upgraded ruby version to 3.2 https://github.com/travis-ci/travis.rb/pull/848
+* Added API Key Reset Capabilities https://github.com/travis-ci/travis.rb/pull/842
+* Fix travis lint issues https://github.com/travis-ci/travis.rb/pull/840
 
 ### 1.11.1
 

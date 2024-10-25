@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 require 'travis/tools/assets'
 require 'travis/cli'
 require 'fileutils'
@@ -8,7 +10,8 @@ module Travis
     module Completion
       RCS = ['.zshrc', '.bashrc'].map { |f| File.expand_path(f, ENV['HOME']) }
       include FileUtils
-      extend self
+
+      module_function
 
       def config_path
         ENV.fetch('TRAVIS_CONFIG_PATH') { File.expand_path('.travis', ENV['HOME']) }
@@ -20,24 +23,25 @@ module Travis
 
       def install_completion
         update_completion
-        source = "source " << cmp_file
+        source = 'source ' << cmp_file
 
         RCS.each do |file|
-          next unless File.exist? file and File.writable? file
+          next unless File.exist?(file) && File.writable?(file)
           next if File.read(file).include? source
-          File.open(file, "a") { |f| f.puts("", "# added by travis gem", "[ ! -s #{cmp_file} ] || #{source}") }
+
+          File.open(file, 'a') { |f| f.puts('', '# added by travis gem', "[ ! -s #{cmp_file} ] || #{source}") }
         end
       end
 
       def update_completion
-        mkdir_p(config_path)
-        cp(Assets['travis.sh'], cmp_file)
+        FileUtils.mkdir_p(config_path)
+        FileUtils.cp(Assets['travis.sh'], cmp_file)
       end
 
       def completion_installed?
-        source = "source " << config_path
+        source = 'source ' << config_path
         RCS.each do |file|
-          next unless File.exist? file and File.writable? file
+          next unless File.exist?(file) && File.writable?(file)
           return false unless File.read(file).include? source
         end
         true

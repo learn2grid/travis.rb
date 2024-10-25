@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'travis/cli'
 require 'travis/tools/notification'
 
@@ -9,10 +11,10 @@ module Travis
 
       on('-r', '--repo SLUG', 'monitor given repository (can be used more than once)') do |c, slug|
         c.repos << slug
-        c.send(:error, "SLUG should be of the form OWNER/REPO") unless slug.split('/').compact.size == 2
+        c.send(:error, 'SLUG should be of the form OWNER/REPO') unless slug.split('/').compact.size == 2
       end
 
-      types = Tools::Notification::DEFAULT.map(&:to_s).join(", ")
+      types = Tools::Notification::DEFAULT.map(&:to_s).join(', ')
       on('-n', '--[no-]notify [TYPE]', "send out desktop notifications (optional type: #{types})") do |c, type|
         c.setup_notification(type)
       end
@@ -32,7 +34,7 @@ module Travis
         super
         repos.map! { |r| repo(r) }
         repos.concat(user.repositories) if my_repos?
-        setup_notification(!firehose? || :dummy) unless notification
+        setup_notification(true) unless notification
         debug "Using notifications: #{notification.class.name[/[^:]+$/]}"
       end
 
@@ -65,16 +67,13 @@ module Travis
         events
       end
 
-      def firehose?
-        org? and repos.empty?
-      end
-
       def all?
         !pull? and !push?
       end
 
       def monitor?(entity)
         return true if all?
+
         entity.pull_request? ? pull? : push?
       end
 
@@ -84,26 +83,26 @@ module Travis
           color(entity.inspect_info, [entity.color, :bold]),
           color(entity.state, entity.color),
           color(entity.commit.subject, entity.color)
-        ].join(" ")
+        ].join(' ')
         notification.notify(entity.repository.slug, [
           entity.class.name[/[^:]+$/],
           entity.number,
-          entity.state + ":",
+          "#{entity.state}:",
           entity.commit.subject
-        ].join(" "))
+        ].join(' '))
       end
 
       def handle_event(event)
         entity = event.job          || event.build
         time   = entity.finished_at || entity.started_at
         display(entity, time) if monitor? entity
-      rescue Travis::Client::Error => error
-        raise error if explode?
+      rescue Travis::Client::Error => e
+        raise e if explode?
       end
 
       def run
         listen(*repos) do |listener|
-          listener.on_connect { say description, "Monitoring #{"builds for " if builds?}%s:" }
+          listener.on_connect { say description, "Monitoring #{'builds for ' if builds?}%s:" }
           listener.on(*events) { |e| handle_event(e) }
         end
       end
